@@ -125,14 +125,14 @@ Now add functional group, using functional group matching function in `get_worms
 source(here::here("scripts", "get_worms_fgrp.R"))
 ```
 Then run it:
-```{r, eval = FALSE}
+```{r, eval = TRUE}
 spp_attr <- biotic_aphias_matched %>%
   mutate(aphia = AphiaID_accepted) %>% 
   group_by(AphiaID_accepted) %>% 
   group_map(~ get_worms_fgrp(AphiaID = .x$aphia)) %>% 
   bind_rows()
 ```
-```{r, echo = FALSE, message = FALSE}
+```{r, echo = FALSE, message = FALSE, eval = FALSE}
 spp_attr <- read_csv(here::here("data", "derived_data/spp_attr.csv"))
 ```
 
