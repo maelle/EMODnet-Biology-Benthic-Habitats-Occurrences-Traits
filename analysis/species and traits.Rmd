@@ -3,12 +3,14 @@ title: "species and traits"
 author: "Tom Webb"
 date: "17/06/2020"
 output:
-  pdf_document: default
+  pdf_document:
+    includes:
+      in_header: "preamble.tex"
   html_document: default
 ---
 
 ```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE)
+knitr::opts_chunk$set(echo = TRUE, cache = TRUE)
 ```
 
 ## A dataset of substrate preferences for European benthic invertebrates
@@ -125,20 +127,30 @@ Now add functional group, using functional group matching function in `get_worms
 source(here::here("scripts", "get_worms_fgrp.R"))
 ```
 Then run it:
-```{r, eval = TRUE}
+
+```{r, echo=FALSE}
+get_spp_attr <- TRUE
+``` 
+
+```{r, eval = get_spp_attr}
 spp_attr <- biotic_aphias_matched %>%
   mutate(aphia = AphiaID_accepted) %>% 
   group_by(AphiaID_accepted) %>% 
   group_map(~ get_worms_fgrp(AphiaID = .x$aphia)) %>% 
   bind_rows()
 ```
-```{r, echo = FALSE, message = FALSE, eval = FALSE}
+```{r, echo = FALSE, message = FALSE, eval = !get_spp_attr}
 spp_attr <- read_csv(here::here("data", "derived_data/spp_attr.csv"))
 ```
 
 Do a quick check of species with two adult classifications:
 ```{r}
-spp_attr %>% filter(!is.na(adult_2))
+spp_attr_agent <- pointblank::create_agent(spp_attr)
+
+spp_attr_agent %>%
+  pointblank::col_vals_not_null(vars(adult_2)) %>%
+  pointblank::interrogate() %>%
+  pointblank::get_agent_report()
 ```
 And any that have two larval classifications:
 ```{r}
