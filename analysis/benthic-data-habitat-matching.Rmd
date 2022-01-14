@@ -27,7 +27,7 @@ library(concaveman)
 
 This code reads in, processes, and exports the EMODnet benthic numerical abundance product, for use in the benthic habitat matching product. The numerical abundance product is described here https://mda.vliz.be/directlink.php?fid=VLIZ_00000727_60196601e2e81. Download the data using its direct download URL, add to the raw data folder, unzip, and read in to R. NB - this is quite a large download (~420MB zipped). The zipped file is also removed.
 
-```{r, message = FALSE}
+```{r, message = FALSE, eval=FALSE}
 curl::curl_download(
   url = "https://mda.vliz.be/download.php?file=VLIZ_00000727_60196601e2e81",
               destfile = here::here(
@@ -38,7 +38,9 @@ unzip(here::here("data", "raw_data/EMODnet-Biology-Benthos_numeric_abundance.zip
       exdir = here::here("data", "raw_data"))
 invisible(file.remove(
   here::here("data", "raw_data/EMODnet-Biology-Benthos_numeric_abundance.zip")))
+```
 
+```{r}
 benth_events <- read_csv(
   here::here("data",
              "raw_data/EMODnet-Biology-Benthos_numeric_abundance/product/maps/spesh.csv"))
@@ -100,7 +102,7 @@ benth_classification <- wm_classification_(id = pull(benth_taxa, AphiaID)) %>%
                   Subtribe, Epifamily)) %>% 
   dplyr::select(id, Species, Phylum, Class, Order, Family, Genus) %>% 
   distinct(id, .keep_all = TRUE) %>% 
-  raname(AphiaID = id)
+  rename(AphiaID = id)
 ```
 
 ## Reading in sediment property data
