@@ -25,3 +25,4 @@ output/
 # RStudio
 .Rproj.user
 renv
+*_cache
