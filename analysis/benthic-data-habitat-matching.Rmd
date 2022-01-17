@@ -67,7 +67,7 @@ benth_abundances_3 <- benth_events %>% dplyr::select(-c(datasetid:sampid)) %>%
                names_to = "AphiaID", names_prefix = "ab_",
                values_to = "abundance", values_drop_na = TRUE)
 benth_abundances_4 <- benth_events %>% dplyr::select(-c(datasetid:sampid)) %>% 
-  slice(50001:72092) %>% 
+  slice(50001:nrow(benth_events)) %>% 
   mutate(across(starts_with("ab_")), na_if(., 0)) %>% 
   pivot_longer(cols = names(benth_events)[str_detect(names(benth_events), "ab_")],
                names_to = "AphiaID", names_prefix = "ab_",
@@ -91,11 +91,13 @@ benth_taxa <- benth_abundances %>%
 ```
 Now, use the `worrms` package to get a full classification for each of these IDs (NB this takes several minutes to run over all ~4200 IDs), and do a little tidying of the output - here keeping only major taxonomic groupings:
 ```{r}
-benth_classification <- wm_classification_(id = pull(benth_taxa, AphiaID)) %>%
+# I was getting Error : id must be of class numeric, integer
+wm_benth_classification <- wm_classification_(id = as.numeric(pull(benth_taxa, AphiaID))) 
+
+benth_classification <- wm_benth_classification %>%
   dplyr::select(-AphiaID) %>% 
   pivot_wider(names_from = rank, values_from = scientificname) %>% 
-  unnest(benth_classification,
-         cols = c(Kingdom, Phylum, Subphylum, Superclass, Class, Subclass,
+  unnest(cols = c(Kingdom, Phylum, Subphylum, Superclass, Class, Subclass,
                   Superorder, Order, Suborder, Infraorder, Parvorder,
                   Superfamily, Family, Genus, Species, Infraclass, Subfamily,
                   Tribe, Subterclass, Subspecies, Subgenus, Section, Subsection,
