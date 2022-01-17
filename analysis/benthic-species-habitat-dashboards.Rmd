@@ -70,7 +70,7 @@ benth_substrate_key <- read_csv(here::here(
 
 ## Getting habitat summaries for a single species
 
-This code loads a function which takes a species Aphia ID and returns basic summary information about the benthic habitats that it has been recorded in (from the EMODnet numerical abundance product). For continuous variables (e.g. 'Percent Mud') the function returns the arithmetic mean value of the variable from all sampling events the species was recorded in, weighted by its abundance in each event. For categorical variables (e.g. 'Substrate') the function returns the relative frequency of occurrence in each catgory (again weighted by abundance). Finally, the function checks if the species is one of those occurring in our Biotic substrate dataset, and adds relevant information about its recorded habitat preferences if so.
+This code loads a function which takes a species Aphia ID and returns basic summary information about the benthic habitats that it has been recorded in (from the EMODnet numerical abundance product). For continuous variables (e.g. 'Percent Mud') the function returns the arithmetic mean value of the variable from all sampling events the species was recorded in, weighted by its abundance in each event. For categorical variables (e.g. 'Substrate') the function returns the relative frequency of occurrence in each category (again weighted by abundance). Finally, the function checks if the species is one of those occurring in our Biotic substrate dataset, and adds relevant information about its recorded habitat preferences if so.
 
 ```{r}
 source(here::here("scripts", "get_species_habitats.R"))
@@ -306,7 +306,7 @@ plot_species_habitats(sp_id = 103228, print_plot = TRUE, save_plot = TRUE)
   
 To create and save these composite plots for all species:
 
-```{r, eval = FALSE}
+```{r, eval = TRUE}
 invisible(
   sp_habitat_summaries %>%
     filter(total_occ > 20) %>% 

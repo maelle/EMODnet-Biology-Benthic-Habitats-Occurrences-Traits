@@ -26,3 +26,4 @@ output/
 .Rproj.user
 renv
 *_cache
+product/species_hab_plots
