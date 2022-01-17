@@ -113,19 +113,19 @@ The first dataset we use is a gridded sediment property map at 0.125degree resol
 ```{r, message = FALSE}
 curl::curl_download(
   url = "https://pureportal.strath.ac.uk/files/69962174/data_files_csv.zip",
-  destfile = "data/raw_data/strath_synthetic_nw_european_shelf_sed_map.zip")
+  destfile = here::here("data/raw_data/strath_synthetic_nw_european_shelf_sed_map.zip"))
 
 # unzip
-unzip("data/raw_data/strath_synthetic_nw_european_shelf_sed_map.zip", exdir = "data/raw_data/strath_sedmap")
+unzip(here::here("data/raw_data/strath_synthetic_nw_european_shelf_sed_map.zip"), exdir = here::here("data/raw_data/strath_sedmap"))
 # remove zip file
 invisible(file.remove(
   here::here("data", "raw_data/strath_synthetic_nw_european_shelf_sed_map.zip")))
 
 # read in sediment properties data and descriptors
 sed_props <- read_csv(
-  "data/raw_data/strath_sedmap/sediment_properties.csv")
+  here::here("data/raw_data/strath_sedmap/sediment_properties.csv"))
 sed_props_descriptors <- read_csv(
-  "data/raw_data/strath_sedmap/sediment_properties_descriptors.csv")
+  here::here("data/raw_data/strath_sedmap/sediment_properties_descriptors.csv"))
 
 # add a logged total D50
 sed_props <- sed_props %>% mutate(log_D50 = log10(TotalD50))
