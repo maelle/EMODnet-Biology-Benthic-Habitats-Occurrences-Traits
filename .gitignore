@@ -24,3 +24,6 @@ output/
 *.knit.md
 # RStudio
 .Rproj.user
+renv
+*_cache
+product/species_hab_plots

@@ -3,12 +3,14 @@ title: "species and traits"
 author: "Tom Webb"
 date: "17/06/2020"
 output:
-  pdf_document: default
+  pdf_document:
+    includes:
+      in_header: "preamble.tex"
   html_document: default
 ---
 
 ```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE)
+knitr::opts_chunk$set(echo = TRUE, cache = TRUE)
 ```
 
 ## A dataset of substrate preferences for European benthic invertebrates
@@ -125,37 +127,67 @@ Now add functional group, using functional group matching function in `get_worms
 source(here::here("scripts", "get_worms_fgrp.R"))
 ```
 Then run it:
-```{r, eval = FALSE}
+
+```{r, echo=FALSE}
+get_spp_attr <- TRUE
+``` 
+
+```{r, eval = get_spp_attr}
 spp_attr <- biotic_aphias_matched %>%
   mutate(aphia = AphiaID_accepted) %>% 
   group_by(AphiaID_accepted) %>% 
   group_map(~ get_worms_fgrp(AphiaID = .x$aphia)) %>% 
   bind_rows()
 ```
-```{r, echo = FALSE, message = FALSE}
+```{r, echo = FALSE, message = FALSE, eval = !get_spp_attr}
 spp_attr <- read_csv(here::here("data", "derived_data/spp_attr.csv"))
 ```
 
 Do a quick check of species with two adult classifications:
+
 ```{r}
+library("magrittr")
 spp_attr %>% filter(!is.na(adult_2))
+
+library("pointblank")
+spp_attr_agent <- create_agent(spp_attr)
+spp_attr_agent <- col_vals_null(spp_attr_agent, vars(adult_2)) 
 ```
+
 And any that have two larval classifications:
+
 ```{r}
 spp_attr %>% filter(!is.na(`larva > planula_2`))
+
+spp_attr_agent <- col_vals_null(spp_attr_agent, "larva > planula_2")
 ```
+
 Or both larva and `larva > planula`:
+
 ```{r}
 spp_attr %>% filter(!is.na(larva) & !is.na(`larva > planula`))
+
+# Let's check our special test :-)
+dplyr::mutate(spp_attr, ok = !(!is.na(larva) & !is.na(`larva > planula`))) %>% dplyr::pull(ok) %>% head()
+
+spp_attr_agent <- specially(spp_attr_agent, function(x) {dplyr::mutate(x, ok = !(!is.na(larva) & !is.na(`larva > planula`))) %>% dplyr::pull(ok) })
 ```
+
 Or both polyp and adult:
-```{r}
+
+```{r, cache = FALSE}
 spp_attr %>% filter(!is.na(polyp) & !is.na(adult))
+
+spp_attr_agent <- specially(spp_attr_agent, function(x) {dplyr::mutate(x, ok = !(!is.na(polyp) & !is.na(adult))) %>% dplyr::pull(ok) })
+interrogate(spp_attr_agent)
 ```
+
 How many species (if any) have juvenile data?
+
 ```{r}
 if("juvenile" %in% names(spp_attr)){spp_attr %>% filter(!is.na(juvenile))}
 ```
+
 Given this we can create a simplified version of just adult and larval functional group:
 ```{r}
 spp_attr_simple <- spp_attr %>%
